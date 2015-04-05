@@ -19,11 +19,10 @@ export default Ember.Component.extend({
 
   draw: function() {
     var svg = d3.select('#' + this.get('elementId'));
-    svg.style('border', '1px solid black');
     svg.style('display', 'none');
 
     var frameCount = this.get("model.frames");
-    var frameIterator = Array(frameCount);
+    var frameIterator = new Array(frameCount);
 
     var that = this;
     var frames = svg.selectAll(".frame").data(frameIterator);
