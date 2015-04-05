@@ -106,27 +106,6 @@ export default Ember.Component.extend({
     var frames = 6;
     var frame = parseInt(t * (frames/cycle));
 
-    var line = this.get('generator');
-
-    var lines = svg.select('.lines').selectAll('path').data(
-      this.get('lines').map(function(line) { return line.interpolate(frame/frames); })
-    );
-    lines.enter().append('path');
-    lines.style('stroke', 'black').style('fill', 'none').style('stroke-width', 2)
-      .attr('d', line);
-
-    var circles = svg.select('.circles').selectAll('circle').data(
-      this.get('lines')
-        .map(function(line) { return line.interpolate(frame/frames); })
-        .reduce(function(acc, line) { return acc.concat(line); }, [])
-    );
-
-    circles.enter().append('circle');
-    circles
-      .attr('r', 4)
-      .attr('cx', (d) => d.x)
-      .attr('cy', (d) => d.y);
-
     this.drawInContainer(svg.select(".half"), .5);
     this.drawInContainer(svg.select(".third"), .3);
   },
@@ -143,12 +122,13 @@ export default Ember.Component.extend({
       debugger;
     };
 
+    var that = this;
     image.onload = function() {
       var context = document.getElementById("canvas").getContext("2d");
 
       context.drawImage(this, 0, 0);
       domURL.revokeObjectURL(url);
-      console.log(canvas.toDataURL());
+      that.sendAction('dataGenerated', canvas.toDataURL());
     };
 
     image.src = url;
