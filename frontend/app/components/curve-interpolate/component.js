@@ -3,12 +3,6 @@ import Ember from 'ember';
 /* global self */
 
 export default Ember.Component.extend({
-  tagName: 'svg',
-  attributeBindings: 'width height xmlns version'.w(),
-
-  xmlns: "http://www.w3.org/2000/svg",
-  version: "1.1",
-
   width: function() {
     return this.get("model.width") * this.get("model.frames");
   }.property("model.width"),
@@ -17,8 +11,12 @@ export default Ember.Component.extend({
     return this.get("model.height");
   }.property("model.height"),
 
+  _getElement: function(element) {
+    return document.querySelector(`#${this.get("elementId")} ${element}`);
+  },
+
   draw: function() {
-    var svg = d3.select('#' + this.get('elementId'));
+    var svg = d3.select(this._getElement("svg"));
     svg.style('display', 'none');
 
     var frameCount = this.get("model.frames");
@@ -36,7 +34,7 @@ export default Ember.Component.extend({
   },
 
   exportPNG: function() {
-    var svgElement = document.getElementById(this.get('elementId'));
+    var svgElement = this._getElement("svg");
     var rawSVG = svgElement.outerHTML;
     var svg = new Blob([rawSVG], {type:"image/svg+xml;charset=utf-8"});
     var domURL = self.URL || self.webkitURL || self;
@@ -49,7 +47,7 @@ export default Ember.Component.extend({
 
     var that = this;
     image.onload = function() {
-      var canvas = document.getElementById("canvas");
+      var canvas = that._getElement("canvas");
       canvas.width = this.width;
       canvas.height = this.height;
 
