@@ -33,29 +33,65 @@ var Line = Ember.Object.extend({
   }
 });
 
+var Container = Ember.Object.extend({
+  objects: null,
+
+  generator: function() {
+    return d3.svg.line()
+      .interpolate('basis')
+      .x(function(d) { return d.x; })
+      .y(function(d) { return d.y; });
+  }.property(),
+
+  draw: function(svg, t) {
+    var line = this.get('generator');
+
+    var lines = svg.select('.lines').selectAll('path').data(
+      this.get('objects').map(function(line) { return line.interpolate(t); })
+    );
+    lines.enter().append('path');
+    lines.style('stroke', 'black').style('fill', 'none').style('stroke-width', 2)
+      .attr('d', line);
+
+    var circles = svg.select('.circles').selectAll('circle').data(
+      this.get('objects')
+        .map(function(line) { return line.interpolate(t); })
+        .reduce(function(acc, line) { return acc.concat(line); }, [])
+    );
+
+    circles.enter().append('circle');
+    circles
+      .attr('r', 4)
+      .attr('cx', (d) => d.x)
+      .attr('cy', (d) => d.y);
+  }
+});
+
 export default Ember.Route.extend({
   model: function() {
-    return [
-      BezierLine.create({
-        endPoint1: Point.create({x:100, y:100}),
-        endPoint2: Point.create({x:100, y:200}),
-        controlPoint1: Point.create({x:100, y:150}),
-        controlPoint2: Point.create({x:20, y:150})
-      }),
-      BezierLine.create({
-        endPoint1: Point.create({x:400, y:100}),
-        endPoint2: Point.create({x:400, y:200}),
-        controlPoint1: Point.create({x:400, y:150}),
-        controlPoint2: Point.create({x:480, y:150})
-      }),
-      Line.create({
-        endPoint1: Point.create({x:100, y:100}),
-        endPoint2: Point.create({x:400, y:100})
-      }),
-      Line.create({
-        endPoint1: Point.create({x:100, y:200}),
-        endPoint2: Point.create({x:400, y:200})
-      })
-    ];
+    return Container.create({
+      objects: [
+        BezierLine.create({
+          endPoint1: Point.create({x:100, y:100}),
+          endPoint2: Point.create({x:100, y:200}),
+          controlPoint1: Point.create({x:100, y:150}),
+          controlPoint2: Point.create({x:20, y:150})
+        }),
+        BezierLine.create({
+          endPoint1: Point.create({x:400, y:100}),
+          endPoint2: Point.create({x:400, y:200}),
+          controlPoint1: Point.create({x:400, y:150}),
+          controlPoint2: Point.create({x:480, y:150})
+        }),
+        Line.create({
+          endPoint1: Point.create({x:100, y:100}),
+          endPoint2: Point.create({x:400, y:100})
+        }),
+        Line.create({
+          endPoint1: Point.create({x:100, y:200}),
+          endPoint2: Point.create({x:400, y:200})
+        })
+      ]
+    });
   }
 });

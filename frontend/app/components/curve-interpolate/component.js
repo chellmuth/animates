@@ -10,36 +10,6 @@ export default Ember.Component.extend({
   width: 500,
   height: 300,
 
-  generator: function() {
-    return d3.svg.line()
-      .interpolate('basis')
-      .x(function(d) { return d.x; })
-      .y(function(d) { return d.y; });
-  }.property(),
-
-  drawInContainer: function(svg, t) {
-    var line = this.get('generator');
-
-    var lines = svg.select('.lines').selectAll('path').data(
-      this.get('model').map(function(line) { return line.interpolate(t); })
-    );
-    lines.enter().append('path');
-    lines.style('stroke', 'black').style('fill', 'none').style('stroke-width', 2)
-      .attr('d', line);
-
-    var circles = svg.select('.circles').selectAll('circle').data(
-      this.get('model')
-        .map(function(line) { return line.interpolate(t); })
-        .reduce(function(acc, line) { return acc.concat(line); }, [])
-    );
-
-    circles.enter().append('circle');
-    circles
-      .attr('r', 4)
-      .attr('cx', (d) => d.x)
-      .attr('cy', (d) => d.y);
-  },
-
   draw: function(timestamp) {
     var svg = d3.select('#' + this.get('elementId'));
     svg.style('border', '1px solid black');
@@ -50,10 +20,9 @@ export default Ember.Component.extend({
     var frames = 6;
     var frame = parseInt(t * (frames/cycle));
 
-    this.drawInContainer(svg.select(".half"), .5);
-    this.drawInContainer(svg.select(".third"), .3);
+    this.get('model').draw(svg.select(".half"), .5);
+    this.get('model').draw(svg.select(".third"), .3);
   },
-
 
   exportPNG: function() {
     var rawSVG = document.getElementById(this.get('elementId')).outerHTML;
