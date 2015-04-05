@@ -3,6 +3,8 @@ import Ember from 'ember';
 /* global self */
 
 export default Ember.Component.extend({
+  pngURL: null,
+
   width: function() {
     return this.get("model.width") * this.get("model.frames");
   }.property("model.width"),
@@ -55,7 +57,7 @@ export default Ember.Component.extend({
 
       context.drawImage(this, 0, 0);
       domURL.revokeObjectURL(url);
-      that.sendAction('dataGenerated', canvas.toDataURL());
+      that.set("pngURL", canvas.toDataURL());
     };
 
     image.src = url;
