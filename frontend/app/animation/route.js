@@ -37,6 +37,8 @@ var Line = Ember.Object.extend({
 var Container = Ember.Object.extend({
   objects: null,
   frames: 6,
+  width: 500,
+  height: 300,
 
   generator: function() {
     return d3.svg.line()
@@ -48,14 +50,14 @@ var Container = Ember.Object.extend({
   draw: function(svg, t) {
     var line = this.get('generator');
 
-    var lines = svg.select('.lines').selectAll('path').data(
+    var lines = svg.selectAll('path').data(
       this.get('objects').map(function(line) { return line.interpolate(t); })
     );
     lines.enter().append('path');
     lines.style('stroke', 'black').style('fill', 'none').style('stroke-width', 2)
       .attr('d', line);
 
-    var circles = svg.select('.circles').selectAll('circle').data(
+    var circles = svg.selectAll('circle').data(
       this.get('objects')
         .map(function(line) { return line.interpolate(t); })
         .reduce(function(acc, line) { return acc.concat(line); }, [])
