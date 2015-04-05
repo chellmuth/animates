@@ -129,7 +129,6 @@ export default Ember.Component.extend({
 
     this.drawInContainer(svg.select(".half"), .5);
     this.drawInContainer(svg.select(".third"), .3);
-    window.requestAnimationFrame(this.draw.bind(this));
   },
 
 
@@ -156,7 +155,7 @@ export default Ember.Component.extend({
   },
 
   didInsertElement: function() {
-    window.requestAnimationFrame(this.draw.bind(this));
-    setTimeout(this.exportPNG.bind(this), 400);
+    this.draw()
+    this.exportPNG();
   }
 });
