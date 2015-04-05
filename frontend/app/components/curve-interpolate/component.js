@@ -1,5 +1,6 @@
 import Ember from 'ember';
 /* global d3 */
+/* global self */
 
 export default Ember.Component.extend({
   tagName: 'svg',
@@ -10,18 +11,13 @@ export default Ember.Component.extend({
   width: 500,
   height: 300,
 
-  draw: function(timestamp) {
+  draw: function() {
     var svg = d3.select('#' + this.get('elementId'));
     svg.style('border', '1px solid black');
     svg.style('display', 'none');
 
-    var cycle = 600;
-    var t = timestamp % cycle;
-    var frames = 6;
-    var frame = parseInt(t * (frames/cycle));
-
-    this.get('model').draw(svg.select(".half"), .5);
-    this.get('model').draw(svg.select(".third"), .3);
+    this.get('model').draw(svg.select(".half"), 0.5);
+    this.get('model').draw(svg.select(".third"), 0.3);
   },
 
   exportPNG: function() {
@@ -31,13 +27,14 @@ export default Ember.Component.extend({
     var url = domURL.createObjectURL(svg);
     var image = new Image();
 
-    image.onerror = function(event) {
-      debugger;
+    image.onerror = function() {
+      alert('error!');
     };
 
     var that = this;
     image.onload = function() {
-      var context = document.getElementById("canvas").getContext("2d");
+      var canvas = document.getElementById("canvas");
+      var context = canvas.getContext("2d");
 
       context.drawImage(this, 0, 0);
       domURL.revokeObjectURL(url);
@@ -48,7 +45,7 @@ export default Ember.Component.extend({
   },
 
   didInsertElement: function() {
-    this.draw()
+    this.draw();
     this.exportPNG();
   }
 });

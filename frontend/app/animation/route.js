@@ -1,4 +1,5 @@
 import Ember from 'ember';
+/* global d3 */
 
 var Point = Ember.Object.extend({
   x: null,
@@ -28,7 +29,7 @@ var Line = Ember.Object.extend({
   endPoint1: null,
   endPoint2: null,
 
-  interpolate: function(t) {
+  interpolate: function() {
     return [ this.get('endPoint1'), this.get('endPoint2') ];
   }
 });
