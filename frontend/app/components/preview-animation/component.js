@@ -13,12 +13,14 @@ export default Ember.Component.extend({
   animateFrame: function(timestamp) {
     var svg = d3.select('#' + this.get('elementId'));
 
+    var model = this.get('model');
+
     var cycle = 600;
     var t = timestamp % cycle;
-    var frames = 6;
+    var frames = model.get('frames');
     var frame = parseInt(t * (frames/cycle));
 
-    this.get('model').draw(svg, frame/frames);
+    model.draw(svg, frame/frames);
     window.requestAnimationFrame(this.animateFrame.bind(this));
   },
 

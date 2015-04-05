@@ -36,6 +36,7 @@ var Line = Ember.Object.extend({
 
 var Container = Ember.Object.extend({
   objects: null,
+  frames: 6,
 
   generator: function() {
     return d3.svg.line()
