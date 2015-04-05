@@ -22,7 +22,7 @@ var BezierLine = Ember.Object.extend({
     });
 
     return [ this.get('endPoint1'), interpolated, this.get('endPoint2') ];
-  }
+  },
 });
 
 var Line = Ember.Object.extend({
@@ -74,6 +74,29 @@ export default Ember.Component.extend({
       .y(function(d) { return d.y });
   }.property(),
 
+  drawInContainer: function(svg, t) {
+    var line = this.get('generator');
+
+    var lines = svg.select('.lines').selectAll('path').data(
+      this.get('lines').map(function(line) { return line.interpolate(t); })
+    );
+    lines.enter().append('path');
+    lines.style('stroke', 'black').style('fill', 'none').style('stroke-width', 2)
+      .attr('d', line);
+
+    var circles = svg.select('.circles').selectAll('circle').data(
+      this.get('lines')
+        .map(function(line) { return line.interpolate(t); })
+        .reduce(function(acc, line) { return acc.concat(line); }, [])
+    );
+
+    circles.enter().append('circle');
+    circles
+      .attr('r', 4)
+      .attr('cx', (d) => d.x)
+      .attr('cy', (d) => d.y);
+  },
+
   draw: function(timestamp) {
     var svg = d3.select('#' + this.get('elementId'));
     svg.style('border', '1px solid black');
@@ -104,6 +127,8 @@ export default Ember.Component.extend({
       .attr('cx', (d) => d.x)
       .attr('cy', (d) => d.y);
 
+    this.drawInContainer(svg.select(".half"), .5);
+    this.drawInContainer(svg.select(".third"), .3);
     window.requestAnimationFrame(this.draw.bind(this));
   },
 
