@@ -1,9 +1,17 @@
 import Ember from 'ember';
 /* global d3 */
 
-var Point = Ember.Object.extend({});
+var Point = Ember.Object.extend({
+  x: null,
+  y: null
+});
 
 var BezierLine = Ember.Object.extend({
+  endPoint1: null,
+  endPoint2: null,
+  controlPoint1: null,
+  controlPoint2: null,
+
   interpolate: function(t) {
     var controlPoint1 = this.get('controlPoint1');
     var controlPoint2 = this.get('controlPoint2');
@@ -14,29 +22,55 @@ var BezierLine = Ember.Object.extend({
     });
 
     return [ this.get('endPoint1'), interpolated, this.get('endPoint2') ];
-  },
+  }
+});
 
-  generator: function() {
-    return d3.svg.line()
-      .interpolate('basis')
-      .x(function(d) { return d.x; })
-      .y(function(d) { return d.y });
-  }.property()
+var Line = Ember.Object.extend({
+  endPoint1: null,
+  endPoint2: null,
+
+  interpolate: function(t) {
+    return [ this.get('endPoint1'), this.get('endPoint2') ];
+  }
 });
 
 export default Ember.Component.extend({
   tagName: 'svg',
   attributeBindings: 'width height'.w(),
 
-  width: 600,
-  height: 600,
+  width: 500,
+  height: 300,
 
-  line: BezierLine.create({
-    endPoint1: Point.create({x:56, y:215}),
-    endPoint2: Point.create({x:504, y:474}),
-    controlPoint1: Point.create({x:528, y:114}),
-    controlPoint2: Point.create({x:190, y:400})
-  }),
+  lines: [
+    BezierLine.create({
+      endPoint1: Point.create({x:100, y:100}),
+      endPoint2: Point.create({x:100, y:200}),
+      controlPoint1: Point.create({x:100, y:150}),
+      controlPoint2: Point.create({x:60, y:150})
+    }),
+    BezierLine.create({
+      endPoint1: Point.create({x:400, y:100}),
+      endPoint2: Point.create({x:400, y:200}),
+      controlPoint1: Point.create({x:400, y:150}),
+      controlPoint2: Point.create({x:440, y:150})
+    }),
+    Line.create({
+      endPoint1: Point.create({x:100, y:100}),
+      endPoint2: Point.create({x:400, y:100})
+    }),
+    Line.create({
+      endPoint1: Point.create({x:100, y:200}),
+      endPoint2: Point.create({x:400, y:200})
+    })
+
+  ],
+
+  generator: function() {
+    return d3.svg.line()
+      .interpolate('basis')
+      .x(function(d) { return d.x; })
+      .y(function(d) { return d.y });
+  }.property(),
 
   draw: function(timestamp){
     var svg = d3.select('#' + this.get('elementId'));
@@ -47,14 +81,21 @@ export default Ember.Component.extend({
     var frames = 4;
     var frame = parseInt(t * (frames/cycle));
 
-    var line = this.get('line').get('generator');
+    var line = this.get('generator');
 
-    var lines = svg.select('.lines').selectAll('path').data([this.get('line').interpolate(frame/frames)]);
+    var lines = svg.select('.lines').selectAll('path').data(
+      this.get('lines').map(function(line) { return line.interpolate(frame/frames); })
+    );
     lines.enter().append('path');
     lines.style('stroke', 'black').style('fill', 'none').style('stroke-width', 2)
       .attr('d', line);
 
-    var circles = svg.select('.circles').selectAll('circle').data(this.get('line').interpolate(frame/frames));
+    var circles = svg.select('.circles').selectAll('circle').data(
+      this.get('lines')
+        .map(function(line) { return line.interpolate(frame/frames); })
+        .reduce(function(acc, line) { return acc.concat(line); }, [])
+    );
+
     circles.enter().append('circle');
     circles
       .attr('r', 4)
