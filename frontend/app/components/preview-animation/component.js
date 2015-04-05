@@ -10,7 +10,7 @@ export default Ember.Component.extend({
   width: 500,
   height: 300,
 
-  draw: function(timestamp) {
+  animateFrame: function(timestamp) {
     var svg = d3.select('#' + this.get('elementId'));
 
     var cycle = 600;
@@ -19,10 +19,10 @@ export default Ember.Component.extend({
     var frame = parseInt(t * (frames/cycle));
 
     this.get('model').draw(svg, frame/frames);
-    window.requestAnimationFrame(this.draw.bind(this));
+    window.requestAnimationFrame(this.animateFrame.bind(this));
   },
 
   didInsertElement: function() {
-    window.requestAnimationFrame(this.draw.bind(this));
+    window.requestAnimationFrame(this.animateFrame.bind(this));
   }
 });
