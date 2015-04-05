@@ -48,13 +48,13 @@ export default Ember.Component.extend({
       endPoint1: Point.create({x:100, y:100}),
       endPoint2: Point.create({x:100, y:200}),
       controlPoint1: Point.create({x:100, y:150}),
-      controlPoint2: Point.create({x:60, y:150})
+      controlPoint2: Point.create({x:20, y:150})
     }),
     BezierLine.create({
       endPoint1: Point.create({x:400, y:100}),
       endPoint2: Point.create({x:400, y:200}),
       controlPoint1: Point.create({x:400, y:150}),
-      controlPoint2: Point.create({x:440, y:150})
+      controlPoint2: Point.create({x:480, y:150})
     }),
     Line.create({
       endPoint1: Point.create({x:100, y:100}),
@@ -80,7 +80,7 @@ export default Ember.Component.extend({
 
     var cycle = 600;
     var t = timestamp % cycle;
-    var frames = 4;
+    var frames = 6;
     var frame = parseInt(t * (frames/cycle));
 
     var line = this.get('generator');
