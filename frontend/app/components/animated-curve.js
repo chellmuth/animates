@@ -17,15 +17,15 @@ export default Ember.Component.extend({
 
     var endPoints = [ {x:56, y:215}, {x:504, y:474} ];
 
-    var cycle = 4000;
+    var cycle = 1600;
     var t = timestamp % cycle;
-    if (t > cycle/2) {
-      t -= 2 * (t - cycle/2);
-    }
+    var frames = 16 * 2;
+    var frame = parseInt(t * (frames/cycle));
+
     var controlPoints = [{x:528, y:114}, {x:90, y:400}];
     var controlPoint = {
-      x: (controlPoints[1].x - controlPoints[0].x) * (t/(cycle/2)) + controlPoints[0].x,
-      y: (controlPoints[1].y - controlPoints[0].y) * (t/(cycle/2)) + controlPoints[0].y
+      x: (controlPoints[1].x - controlPoints[0].x) * (frame/frames) + controlPoints[0].x,
+      y: (controlPoints[1].y - controlPoints[0].y) * (frame/frames) + controlPoints[0].y
     };
 
     var line = d3.svg.line()
