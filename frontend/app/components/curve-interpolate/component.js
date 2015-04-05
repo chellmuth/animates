@@ -14,7 +14,7 @@ export default Ember.Component.extend({
     return d3.svg.line()
       .interpolate('basis')
       .x(function(d) { return d.x; })
-      .y(function(d) { return d.y });
+      .y(function(d) { return d.y; });
   }.property(),
 
   drawInContainer: function(svg, t) {
@@ -43,6 +43,7 @@ export default Ember.Component.extend({
   draw: function(timestamp) {
     var svg = d3.select('#' + this.get('elementId'));
     svg.style('border', '1px solid black');
+    svg.style('display', 'none');
 
     var cycle = 600;
     var t = timestamp % cycle;
