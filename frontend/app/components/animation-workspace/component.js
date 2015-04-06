@@ -2,11 +2,7 @@ import Ember from 'ember';
 /* global d3 */
 
 export default Ember.Component.extend({
-  tagName: 'svg',
-  attributeBindings: 'width height xmlns version'.w(),
-
-  xmlns: "http://www.w3.org/2000/svg",
-  version: "1.1",
+  attributeBindings: 'width height'.w(),
 
   selected: null,
 
@@ -18,8 +14,12 @@ export default Ember.Component.extend({
     return this.get("model.height");
   }.property("model.height"),
 
+  _getElement: function(element) {
+    return document.querySelector(`#${this.get("elementId")} ${element}`);
+  },
+
   draw: function() {
-    var svg = d3.select(`#${this.get("elementId")}`);
+    var svg = d3.select(this._getElement("svg"));
     this.get("model").draw(svg, 0);
 
     var that = this;
