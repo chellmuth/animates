@@ -2,11 +2,9 @@ import Ember from 'ember';
 /* global d3 */
 
 export default Ember.Component.extend({
-  tagName: 'svg',
-  attributeBindings: 'width height xmlns version'.w(),
+  attributeBindings: 'width height'.w(),
+  classNames: [ "col-md-6" ],
 
-  xmlns: "http://www.w3.org/2000/svg",
-  version: "1.1",
   width: function() {
     return this.get("model.width");
   }.property("model.width"),
@@ -15,8 +13,12 @@ export default Ember.Component.extend({
     return this.get("model.height");
   }.property("model.height"),
 
+  _getElement: function(element) {
+    return document.querySelector(`#${this.get("elementId")} ${element}`);
+  },
+
   animateFrame: function(timestamp) {
-    var svg = d3.select('#' + this.get('elementId'));
+    var svg = d3.select(this._getElement("svg"));
     svg.style('border', '1px solid black');
 
     var model = this.get('model');

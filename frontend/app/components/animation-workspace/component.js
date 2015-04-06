@@ -3,6 +3,7 @@ import Ember from 'ember';
 
 export default Ember.Component.extend({
   attributeBindings: 'width height'.w(),
+  classNames: [ "col-md-6" ],
 
   selected: null,
 
@@ -13,6 +14,15 @@ export default Ember.Component.extend({
   height: function() {
     return this.get("model.height");
   }.property("model.height"),
+
+  frames: function() {
+    var frameCount = this.get("model.frames");
+    var result = [];
+    for (var i = 0; i < frameCount; i++) {
+      result.push(i+1);
+    }
+    return result;
+  }.property("model.frames"),
 
   _getElement: function(element) {
     return document.querySelector(`#${this.get("elementId")} ${element}`);
