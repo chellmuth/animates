@@ -6,6 +6,4 @@
 ></svg>
 <canvas></canvas>
 
-{{#if pngURL}}
-<a href={{pngURL}} class="btn btn-default" download="spritesheet">Download</a>
-{{/if}}
+<a {{action "download" on="click"}} class="btn btn-default" disabled={{isDisabled}}>Download</a>

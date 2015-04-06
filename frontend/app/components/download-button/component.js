@@ -4,6 +4,7 @@ import Ember from 'ember';
 
 export default Ember.Component.extend({
   pngURL: null,
+  isDisabled: null,
 
   width: function() {
     return this.get("model.width") * this.get("model.frames");
@@ -17,7 +18,7 @@ export default Ember.Component.extend({
     return document.querySelector(`#${this.get("elementId")} ${element}`);
   },
 
-  draw: function() {
+  _draw: function() {
     var svg = d3.select(this._getElement("svg"));
     svg.style('display', 'none');
 
@@ -35,7 +36,9 @@ export default Ember.Component.extend({
     frames.exit().remove();
   },
 
-  exportPNG: function() {
+  exportPNG: function(callback) {
+    this._draw();
+
     var svgElement = this._getElement("svg");
     var rawSVG = svgElement.outerHTML;
     var svg = new Blob([rawSVG], {type:"image/svg+xml;charset=utf-8"});
@@ -57,14 +60,29 @@ export default Ember.Component.extend({
 
       context.drawImage(this, 0, 0);
       domURL.revokeObjectURL(url);
-      that.set("pngURL", canvas.toDataURL());
+      callback(canvas.toDataURL());
     };
 
     image.src = url;
   },
 
   didInsertElement: function() {
-    this.draw();
-    this.exportPNG();
+    var svg = d3.select(this._getElement("svg"));
+    svg.style('display', 'none');
+  },
+
+  actions: {
+    download: function() {
+      var that = this;
+
+      this.set("isDisabled", true);
+      this.exportPNG(function(URI) {
+        var link = document.createElement("a");
+        link.download = "spritesheet";
+        link.href = URI;
+        link.click();
+        that.set("isDisabled", null);
+      });
+    }
   }
 });
