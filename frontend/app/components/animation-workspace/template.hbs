@@ -7,9 +7,11 @@
   ></svg>
 </div>
 <div class="row text-center">
-  <div class="btn-group">
+  <div class="btn-group" data-toggle="buttons">
     {{#each frame in frames}}
-      <button type="button" class="btn btn-primary">{{frame}}</button>
+      <label class="btn btn-primary">
+        <input type="radio" name="options">{{frame}}
+      </label>
     {{/each}}
   </div>
 </div>
