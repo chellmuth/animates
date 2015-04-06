@@ -1,11 +1,6 @@
 import Ember from 'ember';
 /* global d3 */
 
-var Point = Ember.Object.extend({
-  x: null,
-  y: null
-});
-
 export default Ember.Component.extend({
   tagName: 'svg',
   attributeBindings: 'width height xmlns version'.w(),
