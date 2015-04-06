@@ -1,6 +1,10 @@
 import Ember from 'ember';
 /* global d3 */
 
+var Point = Ember.Object.extend({
+  x: null,
+  y: null
+});
 
 export default Ember.Component.extend({
   tagName: 'svg',
@@ -32,7 +36,6 @@ export default Ember.Component.extend({
         d3.select(this).attr("r", 4);
       })
       .on("mousedown", function() {
-        console.log('down');
         that.set("selected", d3.select(this));
       });
 
@@ -40,13 +43,16 @@ export default Ember.Component.extend({
       .on("mousemove", function() {
         var selected = that.get("selected");
         if (selected !== null) {
-          console.log(d3.mouse(this));
+          that.set(
+            "model.objects.firstObject.controlPoint1",
+            Point.create({x: d3.mouse(this)[0], y: d3.mouse(this)[1]})
+          );
+          window.requestAnimationFrame(function() {
+            that.draw();
+          });
         }
       })
       .on("mouseup", function() {
-        that.set("selected", null);
-      })
-      .on("mouseout", function() {
         that.set("selected", null);
       });
   },
