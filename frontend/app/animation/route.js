@@ -78,12 +78,12 @@ export default Ember.Route.extend({
     return Container.create({
       objects: [
         Line.create({
-          endPoint1: Point.create({x:100, y:100}),
-          endPoint2: Point.create({x:400, y:100})
+          endPoint1: Point.create({x:100, y:100, selector:"model.objects.0.endPoint1"}),
+          endPoint2: Point.create({x:400, y:100, selector:"model.objects.0.endPoint2"})
         }),
         Line.create({
-          endPoint1: Point.create({x:100, y:200}),
-          endPoint2: Point.create({x:400, y:200})
+          endPoint1: Point.create({x:100, y:200, selector:"model.objects.1.endPoint1"}),
+          endPoint2: Point.create({x:400, y:200, selector:"model.objects.1.endPoint2"})
         }),
         BezierLine.create({
           endPoint1: Point.create({x:100, y:100, selector:"model.objects.2.endPoint1"}),
@@ -92,8 +92,8 @@ export default Ember.Route.extend({
           controlPoint2: Point.create({x:20, y:150})
         }),
         BezierLine.create({
-          endPoint1: Point.create({x:400, y:100}),
-          endPoint2: Point.create({x:400, y:200}),
+          endPoint1: Point.create({x:400, y:100, selector:"model.objects.3.endPoint1"}),
+          endPoint2: Point.create({x:400, y:200, selector:"model.objects.3.endPoint2"}),
           controlPoint1: Point.create({x:400, y:150}),
           controlPoint2: Point.create({x:480, y:150})
         })
