@@ -35,18 +35,18 @@ export default Ember.Component.extend({
       .on("mouseout", function() {
         d3.select(this).attr("r", 4);
       })
-      .on("mousedown", function() {
-        that.set("selected", d3.select(this));
+      .on("mousedown", function(d) {
+        if (d.getWithDefault("selector", null) !== null) {
+          that.set("selected", that.get(d.get("selector")));
+        }
       });
 
     svg
       .on("mousemove", function() {
         var selected = that.get("selected");
         if (selected !== null) {
-          that.set(
-            "model.objects.firstObject.controlPoint1",
-            Point.create({x: d3.mouse(this)[0], y: d3.mouse(this)[1]})
-          );
+          selected.set("x", d3.mouse(this)[0]);
+          selected.set("y", d3.mouse(this)[1]);
           window.requestAnimationFrame(function() {
             that.draw();
           });
