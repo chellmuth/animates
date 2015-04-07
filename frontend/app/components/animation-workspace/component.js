@@ -70,8 +70,8 @@ export default Ember.Component.extend({
   },
 
   actions: {
-    selectFrame: function() {
-      this.set("currentFrame", 6);
+    selectFrame: function(index) {
+      this.set("currentFrame", index);
       this._redraw();
     }
   }
