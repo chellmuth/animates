@@ -6,6 +6,7 @@ export default Ember.Component.extend({
   classNames: [ "col-md-6" ],
 
   selected: null,
+  currentFrame: 0,
 
   width: function() {
     return this.get("model.width");
@@ -28,9 +29,13 @@ export default Ember.Component.extend({
     return document.querySelector(`#${this.get("elementId")} ${element}`);
   },
 
+  _redraw: function() {
+    window.requestAnimationFrame(() => this.draw());
+  },
+
   draw: function() {
     var svg = d3.select(this._getElement("svg"));
-    this.get("model").draw(svg, 0);
+    this.get("model").draw(svg, this.get("currentFrame") / this.get("frames.length"));
 
     var that = this;
     svg.selectAll("circle")
@@ -52,9 +57,7 @@ export default Ember.Component.extend({
         if (selected !== null) {
           selected.set("x", d3.mouse(this)[0]);
           selected.set("y", d3.mouse(this)[1]);
-          window.requestAnimationFrame(function() {
-            that.draw();
-          });
+          that._redraw();
         }
       })
       .on("mouseup", function() {
@@ -64,6 +67,13 @@ export default Ember.Component.extend({
 
   didInsertElement: function() {
     this.draw();
+  },
+
+  actions: {
+    selectFrame: function() {
+      this.set("currentFrame", 6);
+      this._redraw();
+    }
   }
 
 });

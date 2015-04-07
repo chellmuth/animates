@@ -8,8 +8,8 @@
 </div>
 <div class="row text-center">
   <div class="btn-group" data-toggle="buttons">
-    {{#each frame in frames}}
-      <label class="btn btn-primary">
+    {{#each frames as |frame index|}}
+      <label class="btn btn-primary" {{action "selectFrame"}}>
         <input type="radio" name="options">{{frame}}
       </label>
     {{/each}}
