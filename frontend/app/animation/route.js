@@ -20,7 +20,7 @@ var BezierLine = Ember.Object.extend({
     var interpolated = Point.create({
       x: (controlPoint2.get('x') - controlPoint1.get('x')) * t + controlPoint1.get('x'),
       y: (controlPoint2.get('y') - controlPoint1.get('y')) * t + controlPoint1.get('y'),
-      selector:"model.objects.2.controlPoint1"
+      selector:"model.objects.2.controlPoint" + (t === 0 ? "1" : "2")
     });
 
     return [ this.get('endPoint1'), interpolated, this.get('endPoint2') ];
