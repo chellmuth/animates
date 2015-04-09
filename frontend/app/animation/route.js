@@ -15,8 +15,8 @@ var BezierLine = Ember.Object.extend({
   selector: null,
 
   init: function() {
-    this.set("endPoint1.selector", this.get("selector") + "endPoint1");
-    this.set("endPoint2.selector", this.get("selector") + "endPoint2");
+    this.set("endPoint1.selector", this.get("selector") + ".endPoint1");
+    this.set("endPoint2.selector", this.get("selector") + ".endPoint2");
   },
 
   interpolate: function(t) {
@@ -39,8 +39,8 @@ var Line = Ember.Object.extend({
   selector: null,
 
   init: function() {
-    this.set("endPoint1.selector", this.get("selector") + "endPoint1");
-    this.set("endPoint2.selector", this.get("selector") + "endPoint2");
+    this.set("endPoint1.selector", this.get("selector") + ".endPoint1");
+    this.set("endPoint2.selector", this.get("selector") + ".endPoint2");
   },
 
   interpolate: function() {
