@@ -35,7 +35,7 @@ export default Ember.Component.extend({
 
   draw: function() {
     var svg = d3.select(this._getElement("svg"));
-    this.get("model").draw(svg, this.get("currentFrame") / this.get("frames.length"));
+    this.get("model").draw(svg, this.get("currentFrame") / (this.get("frames.length") - 1));
 
     var that = this;
     svg.selectAll("circle")
