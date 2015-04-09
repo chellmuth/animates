@@ -9,6 +9,30 @@ function interpolate(t, point1, point2, selector) {
   });
 }
 
+var styles = {
+  "main": {
+    "path": {
+      fill: "none",
+      stroke: "#333",
+      "stroke-width": "2px"
+    },
+    "circle": {
+      fill: "#333"
+    }
+  },
+  "preview": {
+    "path": {
+      fill: "none",
+      stroke: "#ddd",
+      "stroke-width": "2px"
+    },
+    "circle": {
+      fill: "#ddd"
+    }
+  }
+};
+
+
 var Point = Ember.Object.extend({
   x: null,
   y: null,
@@ -103,14 +127,15 @@ var Container = Ember.Object.extend({
       .y(function(d) { return d.y; });
   }.property(),
 
-  draw: function(svg, t) {
+  draw: function(svg, t, style) {
     var line = this.get('generator');
 
     var lines = svg.selectAll('path').data(
       this.get('objects').map(function(line) { return line.interpolate(t); })
     );
     lines.enter().append('path');
-    lines.style('stroke', 'black').style('fill', 'none').style('stroke-width', 2)
+    lines
+      .style(styles[style].path)
       .attr('d', line);
 
     var circles = svg.selectAll('circle').data(
@@ -121,6 +146,7 @@ var Container = Ember.Object.extend({
 
     circles.enter().append('circle');
     circles
+      .style(styles[style].circle)
       .attr('r', 4)
       .attr('cx', (d) => d.x)
       .attr('cy', (d) => d.y);

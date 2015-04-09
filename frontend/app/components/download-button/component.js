@@ -20,18 +20,17 @@ export default Ember.Component.extend({
 
   _draw: function() {
     var svg = d3.select(this._getElement("svg"));
-    svg.style('display', 'none');
 
     var frameCount = this.get("model.frames");
     var frameIterator = new Array(frameCount);
 
     var that = this;
     var frames = svg.selectAll(".frame").data(frameIterator);
-    frames.enter().append("g").classed("frame");
+    frames.enter().append("g").classed("frame", true);
     frames
       .attr("transform", (d, i) => `translate(${i * this.get("model.width")} 0)`)
       .each(function(d, i) {
-        that.get("model").draw(d3.select(this), i / frameCount);
+        that.get("model").draw(d3.select(this), i / frameCount, "main");
       });
     frames.exit().remove();
   },

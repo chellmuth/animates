@@ -37,12 +37,12 @@ export default Ember.Component.extend({
     var svg = d3.select(this._getElement("svg"));
 
     var main = svg.select("g.mainFrame");
-    this.get("model").draw(main, this.get("currentFrame") / (this.get("frames.length") - 1));
+    this.get("model").draw(main, this.get("currentFrame") / (this.get("frames.length") - 1), "main");
 
     var that = this;
-    svg.selectAll("g.frame").each(function(d, i) {
+    svg.selectAll("g.previewFrame").each(function(d, i) {
       if (i === that.get("currentFrame")) { return; }
-      that.get("model").draw(d3.select(this), i / (that.get("frames.length") - 1));
+      that.get("model").draw(d3.select(this), i / (that.get("frames.length") - 1), "preview");
     })
 
     main.selectAll("circle")
@@ -75,7 +75,7 @@ export default Ember.Component.extend({
   didInsertElement: function() {
     var svg = d3.select(this._getElement("svg"));
     for (var i = 1; i < this.get("frames.length"); i++) {
-      svg.append("g").classed("frame", true);
+      svg.append("g").classed("previewFrame", true);
     }
     svg.append("g").classed({mainFrame: true});
     this.draw();

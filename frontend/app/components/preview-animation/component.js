@@ -28,7 +28,7 @@ export default Ember.Component.extend({
     var frames = model.get('frames');
     var frame = parseInt(t * (frames/cycle));
 
-    model.draw(svg, frame/frames);
+    model.draw(svg, frame/frames, "main");
     window.requestAnimationFrame(this.animateFrame.bind(this));
   },
 
