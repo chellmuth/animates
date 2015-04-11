@@ -66,6 +66,14 @@ var InterpolatedBezier = Ember.Object.extend({
   name: null,
   selector: null,
 
+  handlePoint1: function() {
+    return calculate(this.get('line1.endPoint1'), this.get('line1.controlPoint1'), this.get('line1.endPoint2'))[0];
+  }.property("line1.controlPoint1.x", "line1.controlPoint1.y"),
+
+  handlePoint2: function() {
+    return calculate(this.get('line1.endPoint1'), this.get('line1.controlPoint1'), this.get('line1.endPoint2'))[1];
+  }.property("line1.controlPoint1.x", "line1.controlPoint1.y"),
+
   interpolate: function(t) {
     var lineSelector = t === 0 ? "1" : "2";
 
@@ -77,10 +85,6 @@ var InterpolatedBezier = Ember.Object.extend({
         `${this.selector}.line${lineSelector}.${pointSelector}`
       ));
   },
-
-  handles: function() {
-    return calculate(this.get('line1.endPoint1'), this.get('line1.controlPoint1'), this.get('line1.endPoint2'));
-  }
 });
 
 var InterpolatedLine = Ember.Object.extend({
@@ -144,7 +148,12 @@ var Container = Ember.Object.extend({
 
     var circles = svg.selectAll('circle').data(
       this.get('objects')
-        .map(function(line) { return line.interpolate(t).concat(line.handles()); })
+        .map(function(line) {
+          return line.interpolate(t).concat([
+            line.get("handlePoint1"),
+            line.get("handlePoint2")
+          ]);
+        })
         .reduce(function(acc, line) { return acc.concat(line); }, [])
     );
 
