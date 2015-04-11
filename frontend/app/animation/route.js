@@ -49,15 +49,13 @@ var BezierLine = Ember.Object.extend({
     this.set("endPoint2.selector", this.get("selector") + ".endPoint2");
   },
 
-  interpolate: function(t) {
-    var controlPoint1 = this.get('controlPoint1');
-    var controlPoint2 = this.get('controlPoint2');
+  handlePoint1: function() {
+    return calculate(this.get('endPoint1'), this.get('controlPoint1'), this.get('endPoint2'))[0];
+  }.property("controlPoint1.x", "controlPoint1.y"),
 
-    var controlPointSelector = this.get("selector") + ".controlPoint" + (t === 0 ? "1" : "2");
-    var controlPointInterpolated = interpolate(t, controlPoint1, controlPoint2, controlPointSelector);
-
-    return [ this.get('endPoint1'), controlPointInterpolated, this.get('endPoint2') ];
-  }
+  handlePoint2: function() {
+    return calculate(this.get('endPoint1'), this.get('controlPoint1'), this.get('endPoint2'))[1];
+  }.property("controlPoint1.x", "controlPoint1.y")
 });
 
 var InterpolatedBezier = Ember.Object.extend({
@@ -66,18 +64,10 @@ var InterpolatedBezier = Ember.Object.extend({
   name: null,
   selector: null,
 
-  handlePoint1: function() {
-    return calculate(this.get('line1.endPoint1'), this.get('line1.controlPoint1'), this.get('line1.endPoint2'))[0];
-  }.property("line1.controlPoint1.x", "line1.controlPoint1.y"),
-
-  handlePoint2: function() {
-    return calculate(this.get('line1.endPoint1'), this.get('line1.controlPoint1'), this.get('line1.endPoint2'))[1];
-  }.property("line1.controlPoint1.x", "line1.controlPoint1.y"),
-
   interpolate: function(t) {
     var lineSelector = t === 0 ? "1" : "2";
 
-    return ['endPoint1', 'controlPoint1', 'endPoint2']
+    return ['endPoint1', 'handlePoint1', 'handlePoint2', 'endPoint2']
       .map((pointSelector) => interpolate(
         t,
         this.get(`line1.${pointSelector}`),
@@ -150,8 +140,7 @@ var Container = Ember.Object.extend({
       this.get('objects')
         .map(function(line) {
           return line.interpolate(t).concat([
-            line.get("handlePoint1"),
-            line.get("handlePoint2")
+            line.get("line1.controlPoint1")
           ]);
         })
         .reduce(function(acc, line) { return acc.concat(line); }, [])
