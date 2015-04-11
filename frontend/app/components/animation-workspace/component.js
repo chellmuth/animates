@@ -46,7 +46,7 @@ export default Ember.Component.extend({
         return;
       }
       that.get("model").draw(d3.select(this), i / (that.get("frames.length") - 1), "preview");
-    })
+    });
 
     main.selectAll("circle")
       .on("mouseover", function() {
