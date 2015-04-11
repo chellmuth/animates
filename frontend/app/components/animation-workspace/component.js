@@ -82,6 +82,8 @@ export default Ember.Component.extend({
     }
     svg.append("g").classed({mainFrame: true});
     this.draw();
+
+    this.$(".frame-selector label:eq(0)").addClass("active");
   },
 
   actions: {
