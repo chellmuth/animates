@@ -2,8 +2,6 @@ import Ember from 'ember';
 /* global d3 */
 
 export default Ember.Component.extend({
-  classNames: [ "col-md-3" ],
-
   _getElement: function(element) {
     return document.querySelector(`#${this.get("elementId")} ${element}`);
   },
