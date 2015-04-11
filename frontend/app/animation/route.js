@@ -57,6 +57,7 @@ var BezierLine = Ember.Object.extend({
   init: function() {
     this.set("endPoint1.selector", this.get("selector") + ".endPoint1");
     this.set("endPoint2.selector", this.get("selector") + ".endPoint2");
+    this.set("controlPoint1.selector", this.get("selector") + ".controlPoint1");
   },
 
   handlePoint1: _wrapProperty(function() {

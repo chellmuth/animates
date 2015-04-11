@@ -56,7 +56,7 @@ export default Ember.Component.extend({
         d3.select(this).attr("r", 4);
       })
       .on("mousedown", function(d) {
-        var selector = d.getWithDefault("selector", null) || "model.objects.0.line1.controlPoint1";
+        var selector = d.getWithDefault("selector", null);
         if (selector !== null) {
           that.set("selected", that.get(selector));
         }
