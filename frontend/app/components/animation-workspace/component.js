@@ -41,7 +41,10 @@ export default Ember.Component.extend({
 
     var that = this;
     svg.selectAll("g.previewFrame").each(function(d, i) {
-      if (i === that.get("currentFrame")) { return; }
+      if (i === that.get("currentFrame")) {
+        d3.select(this).selectAll("*").remove();
+        return;
+      }
       that.get("model").draw(d3.select(this), i / (that.get("frames.length") - 1), "preview");
     })
 
@@ -74,7 +77,7 @@ export default Ember.Component.extend({
 
   didInsertElement: function() {
     var svg = d3.select(this._getElement("svg"));
-    for (var i = 1; i < this.get("frames.length"); i++) {
+    for (var i = 0; i < this.get("frames.length"); i++) {
       svg.append("g").classed("previewFrame", true);
     }
     svg.append("g").classed({mainFrame: true});

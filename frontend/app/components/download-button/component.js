@@ -30,7 +30,7 @@ export default Ember.Component.extend({
     frames
       .attr("transform", (d, i) => `translate(${i * this.get("model.width")} 0)`)
       .each(function(d, i) {
-        that.get("model").draw(d3.select(this), i / frameCount, "main");
+        that.get("model").draw(d3.select(this), i / (frameCount - 1), "main");
       });
     frames.exit().remove();
   },
