@@ -36,6 +36,17 @@ var styles = {
 };
 
 
+function _wrapProperty(f, dependencies) {
+  return f.property.apply(f, dependencies);
+}
+
+function _interactivePoints() {
+  return [
+    "controlPoint1.x", "controlPoint1.y",
+    "endPoint1.x", "endPoint1.y",
+    "endPoint2.x", "endPoint2.y"
+  ];
+}
 
 var BezierLine = Ember.Object.extend({
   endPoint1: null,
@@ -49,13 +60,13 @@ var BezierLine = Ember.Object.extend({
     this.set("endPoint2.selector", this.get("selector") + ".endPoint2");
   },
 
-  handlePoint1: function() {
+  handlePoint1: _wrapProperty(function() {
     return calculate(this.get('endPoint1'), this.get('controlPoint1'), this.get('endPoint2'))[0];
-  }.property("controlPoint1.x", "controlPoint1.y"),
+  }, _interactivePoints()),
 
-  handlePoint2: function() {
+  handlePoint2: _wrapProperty(function() {
     return calculate(this.get('endPoint1'), this.get('controlPoint1'), this.get('endPoint2'))[1];
-  }.property("controlPoint1.x", "controlPoint1.y")
+  }, _interactivePoints()),
 });
 
 var InterpolatedBezier = Ember.Object.extend({
