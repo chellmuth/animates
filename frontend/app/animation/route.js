@@ -66,6 +66,7 @@ var BezierLine = Ember.Object.extend({
 var InterpolatedBezier = Ember.Object.extend({
   line1: null,
   line2: null,
+  name: null,
   selector: null,
 
   interpolate: function(t) {
@@ -84,6 +85,7 @@ var InterpolatedBezier = Ember.Object.extend({
 var InterpolatedLine = Ember.Object.extend({
   line1: null,
   line2: null,
+  name: null,
   selector: null,
 
   interpolate: function(t) {
@@ -169,6 +171,7 @@ export default Ember.Route.extend({
             endPoint2: Point.create({x:400, y:100}),
             selector: "model.objects.0.line2"
           }),
+          name: "line 1",
           selector: "model.objects.0"
         }),
         InterpolatedLine.create({
@@ -182,6 +185,7 @@ export default Ember.Route.extend({
             endPoint2: Point.create({x:400, y:200}),
             selector: "model.objects.1.line2"
           }),
+          name: "line 2",
           selector: "model.objects.1"
         }),
         InterpolatedBezier.create({
@@ -199,6 +203,7 @@ export default Ember.Route.extend({
             controlPoint2: Point.create({x:20, y:150}),
             selector: "model.objects.2.line2"
           }),
+          name: "bezier 1",
           selector: "model.objects.2"
         }),
         InterpolatedBezier.create({
@@ -216,6 +221,7 @@ export default Ember.Route.extend({
             controlPoint2: Point.create({x:480, y:150}),
             selector: "model.objects.3.line2"
           }),
+          name: "bezier 2",
           selector: "model.objects.3"
         })
       ]
