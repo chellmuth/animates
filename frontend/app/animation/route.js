@@ -52,7 +52,6 @@ var BezierLine = Ember.Object.extend({
   endPoint1: null,
   endPoint2: null,
   controlPoint1: null,
-  controlPoint2: null,
   selector: null,
 
   init: function() {
@@ -203,14 +202,12 @@ export default Ember.Route.extend({
             endPoint1: Point.create({x:100, y:100}),
             endPoint2: Point.create({x:100, y:200}),
             controlPoint1: Point.create({x:100, y:150}),
-            controlPoint2: Point.create({x:20, y:150}),
             selector: "model.objects.0.line1"
           }),
           line2: BezierLine.create({
             endPoint1: Point.create({x:100, y:100}),
             endPoint2: Point.create({x:100, y:200}),
             controlPoint1: Point.create({x:100, y:150}),
-            controlPoint2: Point.create({x:20, y:150}),
             selector: "model.objects.0.line2"
           }),
           name: "bezier 1",
@@ -221,14 +218,12 @@ export default Ember.Route.extend({
         //     endPoint1: Point.create({x:400, y:100}),
         //     endPoint2: Point.create({x:400, y:200}),
         //     controlPoint1: Point.create({x:400, y:150}),
-        //     controlPoint2: Point.create({x:480, y:150}),
         //     selector: "model.objects.1.line1"
         //   }),
         //   line2: BezierLine.create({
         //     endPoint1: Point.create({x:400, y:100}),
         //     endPoint2: Point.create({x:400, y:200}),
         //     controlPoint1: Point.create({x:400, y:150}),
-        //     controlPoint2: Point.create({x:480, y:150}),
         //     selector: "model.objects.1.line2"
         //   }),
         //   name: "bezier 2",
