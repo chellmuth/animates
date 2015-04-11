@@ -21,9 +21,9 @@ export default Ember.Component.extend({
     var svg = d3.select(this._getElement("svg"));
     svg.style('border', '1px solid black');
 
-    var model = this.get('model');
+    var model = this.get("model");
 
-    var cycle = 600;
+    var cycle = this.get("model.cycle");
     var t = timestamp % cycle;
     var frames = model.get('frames');
     var frame = parseInt(t * (frames/cycle));
@@ -34,5 +34,6 @@ export default Ember.Component.extend({
 
   didInsertElement: function() {
     window.requestAnimationFrame(this.animateFrame.bind(this));
-  }
+  },
+
 });

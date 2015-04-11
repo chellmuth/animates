@@ -117,6 +117,7 @@ var Line = Ember.Object.extend({
 var Container = Ember.Object.extend({
   objects: null,
   frames: 6,
+  cycle: 1000,
   width: 500,
   height: 300,
 
