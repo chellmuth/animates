@@ -86,6 +86,43 @@ var InterpolatedBezier = Ember.Object.extend({
         `${this.selector}.line${lineSelector}.${pointSelector}`
       ));
   },
+
+  generator: function() {
+    return d3.svg.line()
+      .interpolate('basis')
+      .x(function(d) { return d.x; })
+      .y(function(d) { return d.y; });
+  }.property(),
+
+  draw: function(svg, t, style) {
+    var results = [];
+
+    var points = this.interpolate(t);
+    var curves = [];
+    for (var i = 0; i < points.length - 2; i += 2) {
+      results.push(points.slice(i, i + 3));
+    }
+
+    var lines = svg.selectAll('path').data(results);
+    lines.enter().append('path');
+    lines
+      .style(styles[style].path)
+      .attr('d', this.get('generator'));
+
+    var circles = svg.selectAll('circle').data(
+      this.interpolate(t).concat([
+        this.get("line1.controlPoint1")
+      ])
+      .reduce(function(acc, line) { return acc.concat(line); }, [])
+    );
+
+    circles.enter().append('circle');
+    circles
+      .style(styles[style].circle)
+      .attr('r', 4)
+      .attr('cx', (d) => d.x)
+      .attr('cy', (d) => d.y);
+  }
 });
 
 var InterpolatedLine = Ember.Object.extend({
@@ -129,47 +166,10 @@ var Container = Ember.Object.extend({
   width: 500,
   height: 300,
 
-  generator: function() {
-    return d3.svg.line()
-      .interpolate('basis')
-      .x(function(d) { return d.x; })
-      .y(function(d) { return d.y; });
-  }.property(),
-
   draw: function(svg, t, style) {
-    var line = this.get('generator');
-
-    var results = [];
-    this.get('objects').forEach(function(line) {
-      var points = line.interpolate(t);
-      var curves = [];
-      for (var i = 0; i < points.length - 2; i += 2) {
-        results.push(points.slice(i, i + 3));
-      }
+    this.get('objects').forEach(function(object) {
+      object.draw(svg, t, style);
     });
-
-    var lines = svg.selectAll('path').data(results);
-    lines.enter().append('path');
-    lines
-      .style(styles[style].path)
-      .attr('d', line);
-
-    var circles = svg.selectAll('circle').data(
-      this.get('objects')
-        .map(function(line) {
-          return line.interpolate(t).concat([
-            line.get("line1.controlPoint1")
-          ]);
-        })
-        .reduce(function(acc, line) { return acc.concat(line); }, [])
-    );
-
-    circles.enter().append('circle');
-    circles
-      .style(styles[style].circle)
-      .attr('r', 4)
-      .attr('cx', (d) => d.x)
-      .attr('cy', (d) => d.y);
   }
 });
 
