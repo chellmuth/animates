@@ -143,7 +143,7 @@ var Container = Ember.Object.extend({
     this.get('objects').forEach(function(line) {
       var points = line.interpolate(t);
       var curves = [];
-      for (var i = 0; i < points.length - 2; i++) {
+      for (var i = 0; i < points.length - 2; i += 2) {
         results.push(points.slice(i, i + 3));
       }
     });
