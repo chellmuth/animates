@@ -5,3 +5,8 @@ canvas {
 .half {
     background-color: #ddd;
 }
+
+
+.previewFrame circle {
+    display: none;
+}
