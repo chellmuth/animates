@@ -78,7 +78,7 @@ var InterpolatedBezier = Ember.Object.extend({
   interpolate: function(t) {
     var lineSelector = t === 0 ? "1" : "2";
 
-    return ['endPoint1', 'handlePoint1', 'handlePoint2', 'endPoint2']
+    return ['endPoint1', 'handlePoint1', 'controlPoint1', 'handlePoint2', 'endPoint2']
       .map((pointSelector) => interpolate(
         t,
         this.get(`line1.${pointSelector}`),
@@ -139,9 +139,16 @@ var Container = Ember.Object.extend({
   draw: function(svg, t, style) {
     var line = this.get('generator');
 
-    var lines = svg.selectAll('path').data(
-      this.get('objects').map(function(line) { return line.interpolate(t); })
-    );
+    var results = [];
+    this.get('objects').forEach(function(line) {
+      var points = line.interpolate(t);
+      var curves = [];
+      for (var i = 0; i < points.length - 2; i++) {
+        results.push(points.slice(i, i + 3));
+      }
+    });
+
+    var lines = svg.selectAll('path').data(results);
     lines.enter().append('path');
     lines
       .style(styles[style].path)
@@ -202,7 +209,7 @@ export default Ember.Route.extend({
           line1: BezierLine.create({
             endPoint1: Point.create({x:100, y:100}),
             endPoint2: Point.create({x:100, y:200}),
-            controlPoint1: Point.create({x:100, y:150}),
+            controlPoint1: Point.create({x:160, y:150}),
             selector: "model.objects.0.line1"
           }),
           line2: BezierLine.create({
