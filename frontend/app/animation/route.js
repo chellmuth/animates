@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import Point from '../utils/geometry';
-import calculate from '../utils/bezier-curve';
+import makeHandles from '../utils/bezier-curve';
 
 /* global d3 */
 
@@ -63,11 +63,11 @@ var BezierLine = Ember.Object.extend({
   },
 
   handlePoint1: _wrapProperty(function() {
-    return calculate(this.get('endPoint1'), this.get('controlPoint1'), this.get('endPoint2'), this.get("handleScale"))[0];
+    return makeHandles(this.get('endPoint1'), this.get('controlPoint1'), this.get('endPoint2'), this.get("handleScale"))[0];
   }, _interactivePoints()),
 
   handlePoint2: _wrapProperty(function() {
-    return calculate(this.get('endPoint1'), this.get('controlPoint1'), this.get('endPoint2'), this.get("handleScale"))[1];
+    return makeHandles(this.get('endPoint1'), this.get('controlPoint1'), this.get('endPoint2'), this.get("handleScale"))[1];
   }, _interactivePoints()),
 });
 

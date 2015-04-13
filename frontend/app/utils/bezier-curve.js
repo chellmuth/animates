@@ -1,6 +1,6 @@
 import Vector from './vector';
 
-function calculate(point1, point2, point3, scale) {
+function makeHandles(point1, point2, point3, scale) {
   var tangent = Vector.createFromPoint(point1).subtract(Vector.createFromPoint(point3)).normal();
 
   return [
@@ -9,4 +9,4 @@ function calculate(point1, point2, point3, scale) {
   ];
 }
 
-export default calculate;
+export default makeHandles;
