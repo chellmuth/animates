@@ -5,7 +5,7 @@ export default Ember.Component.extend({
   attributeBindings: 'width height'.w(),
   classNames: [ "col-md-6" ],
 
-  selected: null,
+  selector: null,
   currentFrame: 0,
 
   width: function() {
@@ -56,22 +56,29 @@ export default Ember.Component.extend({
         d3.select(this).attr("r", 4);
       })
       .on("mousedown", function(d) {
-        if (d.getWithDefault("selector", null) !== null) {
-          that.set("selected", that.get(d.get("selector")));
+        var selector = d.getWithDefault("selector", null);
+        if (selector !== null) {
+          that.set("selector", selector);
         }
       });
 
     svg
       .on("mousemove", function() {
-        var selected = that.get("selected");
-        if (selected !== null) {
-          selected.set("x", d3.mouse(this)[0]);
-          selected.set("y", d3.mouse(this)[1]);
+        var selector = that.get("selector");
+        if (selector !== null) {
+          var pieces = selector.split(".");
+          var point = pieces.pop();
+          var line = pieces.pop();
+          var parent = pieces.join(".");
+
+          var selected = that.get(parent);
+          selected.move(point, line, d3.mouse(this)[0], d3.mouse(this)[1]);
+
           that._redraw();
         }
       })
       .on("mouseup", function() {
-        that.set("selected", null);
+        that.set("selector", null);
       });
   },
 

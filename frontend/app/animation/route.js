@@ -1,4 +1,7 @@
 import Ember from 'ember';
+import Point from '../utils/geometry';
+import BezierCurve from '../utils/bezier-curve';
+
 /* global d3 */
 
 function interpolate(t, point1, point2, selector) {
@@ -33,36 +36,6 @@ var styles = {
 };
 
 
-var Point = Ember.Object.extend({
-  x: null,
-  y: null,
-  selector: null,
-
-});
-
-var BezierLine = Ember.Object.extend({
-  endPoint1: null,
-  endPoint2: null,
-  controlPoint1: null,
-  controlPoint2: null,
-  selector: null,
-
-  init: function() {
-    this.set("endPoint1.selector", this.get("selector") + ".endPoint1");
-    this.set("endPoint2.selector", this.get("selector") + ".endPoint2");
-  },
-
-  interpolate: function(t) {
-    var controlPoint1 = this.get('controlPoint1');
-    var controlPoint2 = this.get('controlPoint2');
-
-    var controlPointSelector = this.get("selector") + ".controlPoint" + (t === 0 ? "1" : "2");
-    var controlPointInterpolated = interpolate(t, controlPoint1, controlPoint2, controlPointSelector);
-
-    return [ this.get('endPoint1'), controlPointInterpolated, this.get('endPoint2') ];
-  },
-});
-
 var InterpolatedBezier = Ember.Object.extend({
   line1: null,
   line2: null,
@@ -72,7 +45,7 @@ var InterpolatedBezier = Ember.Object.extend({
   interpolate: function(t) {
     var lineSelector = t === 0 ? "1" : "2";
 
-    return ['endPoint1', 'controlPoint1', 'endPoint2']
+    return ['endPoint1', 'handlePoint1', 'controlPoint1', 'handlePoint2', 'endPoint2']
       .map((pointSelector) => interpolate(
         t,
         this.get(`line1.${pointSelector}`),
@@ -80,6 +53,62 @@ var InterpolatedBezier = Ember.Object.extend({
         `${this.selector}.line${lineSelector}.${pointSelector}`
       ));
   },
+
+  move: function(pointSelector, lineSelector, x, y) {
+    var line = this.get(lineSelector);
+    if (pointSelector.indexOf("handlePoint") > -1) {
+      var point = line.get("controlPoint1");
+      var target = Point.create({x: x, y: y});
+      var length = point.distance(target);
+      line.set("handleScale", length);
+    } else {
+      line.set(`${pointSelector}.x`, x);
+      line.set(`${pointSelector}.y`, y);
+    }
+  },
+
+  generator: function() {
+    return d3.svg.line()
+      .interpolate('basis')
+      .x(function(d) { return d.x; })
+      .y(function(d) { return d.y; });
+  }.property(),
+
+  draw: function(svg, t, style) {
+    var results = [];
+
+    var points = this.interpolate(t);
+    var curves = [];
+    for (var i = 0; i < points.length - 2; i += 2) {
+      results.push(points.slice(i, i + 3));
+    }
+
+    var lines = svg.selectAll('path').data(results);
+    lines.enter().append('path');
+    lines
+      .style(styles[style].path)
+      .attr('d', this.get('generator'));
+
+    var lineSelector = t === 0 ? "1" : "2";
+    var circles = svg.selectAll('circle').data(
+      this.interpolate(t).concat([
+        interpolate(
+          t,
+          this.get("line1.controlPoint1"),
+          this.get("line2.controlPoint1"),
+          `${this.get("selector")}.line${lineSelector}.controlPoint1`
+        )
+      ])
+      .reduce(function(acc, line) { return acc.concat(line); }, [])
+    );
+
+    circles.enter().append('circle');
+    circles
+      .style(styles[style].circle)
+      .attr('r', 4)
+      .attr('cx', (d) => d.x)
+      .attr('cy', (d) => d.y);
+  }
 });
 
 var InterpolatedLine = Ember.Object.extend({
@@ -99,6 +128,39 @@ var InterpolatedLine = Ember.Object.extend({
         `${this.selector}.line${lineSelector}.${pointSelector}`
       ));
   },
+
+  generator: function() {
+    return d3.svg.line()
+      .interpolate('basis')
+      .x(function(d) { return d.x; })
+      .y(function(d) { return d.y; });
+  }.property(),
+
+  move: function(pointSelector, lineSelector, x, y) {
+    var point = this.get(lineSelector).get(pointSelector);
+    point.set("x", x);
+    point.set("y", y);
+  },
+
+  draw: function(svg, t, style) {
+    var points = this.interpolate(t);
+    var lines = svg.selectAll('path').data([points]);
+    lines.enter().append('path');
+    lines
+      .style(styles[style].path)
+      .attr('d', this.get('generator'));
+
+    var circles = svg.selectAll('circle').data(
+      points.reduce(function(acc, line) { return acc.concat(line); }, [])
+    );
+
+    circles.enter().append('circle');
+    circles
+      .style(styles[style].circle)
+      .attr('r', 4)
+      .attr('cx', (d) => d.x)
+      .attr('cy', (d) => d.y);
+  }
 });
 
 var Line = Ember.Object.extend({
@@ -123,36 +185,11 @@ var Container = Ember.Object.extend({
   width: 500,
   height: 300,
 
-  generator: function() {
-    return d3.svg.line()
-      .interpolate('basis')
-      .x(function(d) { return d.x; })
-      .y(function(d) { return d.y; });
-  }.property(),
-
   draw: function(svg, t, style) {
-    var line = this.get('generator');
-
-    var lines = svg.selectAll('path').data(
-      this.get('objects').map(function(line) { return line.interpolate(t); })
-    );
-    lines.enter().append('path');
-    lines
-      .style(styles[style].path)
-      .attr('d', line);
-
-    var circles = svg.selectAll('circle').data(
-      this.get('objects')
-        .map(function(line) { return line.interpolate(t); })
-        .reduce(function(acc, line) { return acc.concat(line); }, [])
-    );
-
-    circles.enter().append('circle');
-    circles
-      .style(styles[style].circle)
-      .attr('r', 4)
-      .attr('cx', (d) => d.x)
-      .attr('cy', (d) => d.y);
+    svg.selectAll("*").remove();
+    this.get('objects').forEach(function(object) {
+      object.draw(svg.append("g"), t, style);
+    });
   }
 });
 
@@ -189,36 +226,32 @@ export default Ember.Route.extend({
           selector: "model.objects.1"
         }),
         InterpolatedBezier.create({
-          line1: BezierLine.create({
+          line1: BezierCurve.create({
             endPoint1: Point.create({x:100, y:100}),
             endPoint2: Point.create({x:100, y:200}),
-            controlPoint1: Point.create({x:100, y:150}),
-            controlPoint2: Point.create({x:20, y:150}),
+            controlPoint1: Point.create({x:160, y:150}),
             selector: "model.objects.2.line1"
           }),
-          line2: BezierLine.create({
+          line2: BezierCurve.create({
             endPoint1: Point.create({x:100, y:100}),
             endPoint2: Point.create({x:100, y:200}),
             controlPoint1: Point.create({x:100, y:150}),
-            controlPoint2: Point.create({x:20, y:150}),
             selector: "model.objects.2.line2"
           }),
           name: "bezier 1",
           selector: "model.objects.2"
         }),
         InterpolatedBezier.create({
-          line1: BezierLine.create({
+          line1: BezierCurve.create({
             endPoint1: Point.create({x:400, y:100}),
             endPoint2: Point.create({x:400, y:200}),
             controlPoint1: Point.create({x:400, y:150}),
-            controlPoint2: Point.create({x:480, y:150}),
             selector: "model.objects.3.line1"
           }),
-          line2: BezierLine.create({
+          line2: BezierCurve.create({
             endPoint1: Point.create({x:400, y:100}),
             endPoint2: Point.create({x:400, y:200}),
             controlPoint1: Point.create({x:400, y:150}),
-            controlPoint2: Point.create({x:480, y:150}),
             selector: "model.objects.3.line2"
           }),
           name: "bezier 2",
