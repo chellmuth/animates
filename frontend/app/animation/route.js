@@ -36,7 +36,6 @@ var styles = {
 };
 
 
-
 var InterpolatedBezier = Ember.Object.extend({
   line1: null,
   line2: null,
@@ -55,12 +54,17 @@ var InterpolatedBezier = Ember.Object.extend({
       ));
   },
 
-  move: function(selector, x, y) {
-    var target = Point.create({x: x, y: y});
-    var controlPoint = this.get("line1.controlPoint1");
-    var length = controlPoint.distance(target);
-
-    this.get("line1").set("handleScale", length);
+  move: function(pointSelector, lineSelector, x, y) {
+    var line = this.get(lineSelector);
+    if (pointSelector.indexOf("handlePoint") > -1) {
+      var point = line.get("controlPoint1");
+      var target = Point.create({x: x, y: y});
+      var length = point.distance(target);
+      line.set("handleScale", length);
+    } else {
+      line.set(`${pointSelector}.x`, x);
+      line.set(`${pointSelector}.y`, y);
+    }
   },
 
   generator: function() {
@@ -131,6 +135,12 @@ var InterpolatedLine = Ember.Object.extend({
       .x(function(d) { return d.x; })
       .y(function(d) { return d.y; });
   }.property(),
+
+  move: function(pointSelector, lineSelector, x, y) {
+    var point = this.get(lineSelector).get(pointSelector);
+    point.set("x", x);
+    point.set("y", y);
+  },
 
   draw: function(svg, t, style) {
     var points = this.interpolate(t);
