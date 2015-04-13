@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import Point from '../utils/geometry';
-import makeHandles from '../utils/bezier-curve';
+import BezierCurve from '../utils/bezier-curve';
 
 /* global d3 */
 
@@ -36,40 +36,6 @@ var styles = {
 };
 
 
-function _wrapProperty(f, dependencies) {
-  return f.property.apply(f, dependencies);
-}
-
-function _interactivePoints() {
-  return [
-    "controlPoint1.x", "controlPoint1.y",
-    "endPoint1.x", "endPoint1.y",
-    "endPoint2.x", "endPoint2.y",
-    "handleScale"
-  ];
-}
-
-var BezierLine = Ember.Object.extend({
-  endPoint1: null,
-  endPoint2: null,
-  controlPoint1: null,
-  handleScale: 30,
-  selector: null,
-
-  init: function() {
-    this.set("endPoint1.selector", this.get("selector") + ".endPoint1");
-    this.set("endPoint2.selector", this.get("selector") + ".endPoint2");
-    this.set("controlPoint1.selector", this.get("selector") + ".controlPoint1");
-  },
-
-  handlePoint1: _wrapProperty(function() {
-    return makeHandles(this.get('endPoint1'), this.get('controlPoint1'), this.get('endPoint2'), this.get("handleScale"))[0];
-  }, _interactivePoints()),
-
-  handlePoint2: _wrapProperty(function() {
-    return makeHandles(this.get('endPoint1'), this.get('controlPoint1'), this.get('endPoint2'), this.get("handleScale"))[1];
-  }, _interactivePoints()),
-});
 
 var InterpolatedBezier = Ember.Object.extend({
   line1: null,
@@ -250,13 +216,13 @@ export default Ember.Route.extend({
           selector: "model.objects.1"
         }),
         InterpolatedBezier.create({
-          line1: BezierLine.create({
+          line1: BezierCurve.create({
             endPoint1: Point.create({x:100, y:100}),
             endPoint2: Point.create({x:100, y:200}),
             controlPoint1: Point.create({x:160, y:150}),
             selector: "model.objects.2.line1"
           }),
-          line2: BezierLine.create({
+          line2: BezierCurve.create({
             endPoint1: Point.create({x:100, y:100}),
             endPoint2: Point.create({x:100, y:200}),
             controlPoint1: Point.create({x:100, y:150}),
@@ -266,13 +232,13 @@ export default Ember.Route.extend({
           selector: "model.objects.2"
         }),
         InterpolatedBezier.create({
-          line1: BezierLine.create({
+          line1: BezierCurve.create({
             endPoint1: Point.create({x:400, y:100}),
             endPoint2: Point.create({x:400, y:200}),
             controlPoint1: Point.create({x:400, y:150}),
             selector: "model.objects.3.line1"
           }),
-          line2: BezierLine.create({
+          line2: BezierCurve.create({
             endPoint1: Point.create({x:400, y:100}),
             endPoint2: Point.create({x:400, y:200}),
             controlPoint1: Point.create({x:400, y:150}),
