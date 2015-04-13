@@ -66,9 +66,16 @@ export default Ember.Component.extend({
       .on("mousemove", function() {
         var selector = that.get("selector");
         if (selector !== null) {
-          var selected = that.get(selector);
-          selected.set("x", d3.mouse(this)[0]);
-          selected.set("y", d3.mouse(this)[1]);
+          if (selector.indexOf("handlePoint1") > -1) {
+            var selected = that.get("model.objects.2");
+            selected.move("line1.handlePoint1", d3.mouse(this)[0], d3.mouse(this)[1]);
+          } else {
+            var selected = that.get(selector);
+
+            selected.set("x", d3.mouse(this)[0]);
+            selected.set("y", d3.mouse(this)[1]);
+          }
+
           that._redraw();
         }
       })
