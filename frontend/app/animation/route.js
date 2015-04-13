@@ -167,8 +167,9 @@ var Container = Ember.Object.extend({
   height: 300,
 
   draw: function(svg, t, style) {
+    svg.selectAll("*").remove();
     this.get('objects').forEach(function(object) {
-      object.draw(svg, t, style);
+      object.draw(svg.append("g"), t, style);
     });
   }
 });
@@ -221,22 +222,22 @@ export default Ember.Route.extend({
           name: "bezier 1",
           selector: "model.objects.0"
         }),
-        // InterpolatedBezier.create({
-        //   line1: BezierLine.create({
-        //     endPoint1: Point.create({x:400, y:100}),
-        //     endPoint2: Point.create({x:400, y:200}),
-        //     controlPoint1: Point.create({x:400, y:150}),
-        //     selector: "model.objects.1.line1"
-        //   }),
-        //   line2: BezierLine.create({
-        //     endPoint1: Point.create({x:400, y:100}),
-        //     endPoint2: Point.create({x:400, y:200}),
-        //     controlPoint1: Point.create({x:400, y:150}),
-        //     selector: "model.objects.1.line2"
-        //   }),
-        //   name: "bezier 2",
-        //   selector: "model.objects.1"
-        // })
+        InterpolatedBezier.create({
+          line1: BezierLine.create({
+            endPoint1: Point.create({x:400, y:100}),
+            endPoint2: Point.create({x:400, y:200}),
+            controlPoint1: Point.create({x:400, y:150}),
+            selector: "model.objects.1.line1"
+          }),
+          line2: BezierLine.create({
+            endPoint1: Point.create({x:400, y:100}),
+            endPoint2: Point.create({x:400, y:200}),
+            controlPoint1: Point.create({x:400, y:150}),
+            selector: "model.objects.1.line2"
+          }),
+          name: "bezier 2",
+          selector: "model.objects.1"
+        })
       ]
     });
   }
