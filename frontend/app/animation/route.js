@@ -109,9 +109,15 @@ var InterpolatedBezier = Ember.Object.extend({
       .style(styles[style].path)
       .attr('d', this.get('generator'));
 
+    var lineSelector = t === 0 ? "1" : "2";
     var circles = svg.selectAll('circle').data(
       this.interpolate(t).concat([
-        this.get("line1.controlPoint1")
+        interpolate(
+          t,
+          this.get("line1.controlPoint1"),
+          this.get("line2.controlPoint1"),
+          `${this.get("selector")}.line${lineSelector}.controlPoint1`
+        )
       ])
       .reduce(function(acc, line) { return acc.concat(line); }, [])
     );
