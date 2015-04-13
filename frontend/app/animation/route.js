@@ -142,6 +142,33 @@ var InterpolatedLine = Ember.Object.extend({
         `${this.selector}.line${lineSelector}.${pointSelector}`
       ));
   },
+
+  generator: function() {
+    return d3.svg.line()
+      .interpolate('basis')
+      .x(function(d) { return d.x; })
+      .y(function(d) { return d.y; });
+  }.property(),
+
+  draw: function(svg, t, style) {
+    var points = this.interpolate(t);
+    var lines = svg.selectAll('path').data([points]);
+    lines.enter().append('path');
+    lines
+      .style(styles[style].path)
+      .attr('d', this.get('generator'));
+
+    var circles = svg.selectAll('circle').data(
+      points.reduce(function(acc, line) { return acc.concat(line); }, [])
+    );
+
+    circles.enter().append('circle');
+    circles
+      .style(styles[style].circle)
+      .attr('r', 4)
+      .attr('cx', (d) => d.x)
+      .attr('cy', (d) => d.y);
+  }
 });
 
 var Line = Ember.Object.extend({
@@ -178,65 +205,65 @@ export default Ember.Route.extend({
   model: function() {
     return Container.create({
       objects: [
-        // InterpolatedLine.create({
-        //   line1: Line.create({
-        //     endPoint1: Point.create({x:100, y:100}),
-        //     endPoint2: Point.create({x:400, y:100}),
-        //     selector: "model.objects.0.line1"
-        //   }),
-        //   line2: Line.create({
-        //     endPoint1: Point.create({x:100, y:100}),
-        //     endPoint2: Point.create({x:400, y:100}),
-        //     selector: "model.objects.0.line2"
-        //   }),
-        //   name: "line 1",
-        //   selector: "model.objects.0"
-        // }),
-        // InterpolatedLine.create({
-        //   line1: Line.create({
-        //     endPoint1: Point.create({x:100, y:200}),
-        //     endPoint2: Point.create({x:400, y:200}),
-        //     selector: "model.objects.1.line1"
-        //   }),
-        //   line2: Line.create({
-        //     endPoint1: Point.create({x:100, y:200}),
-        //     endPoint2: Point.create({x:400, y:200}),
-        //     selector: "model.objects.1.line2"
-        //   }),
-        //   name: "line 2",
-        //   selector: "model.objects.1"
-        // }),
+        InterpolatedLine.create({
+          line1: Line.create({
+            endPoint1: Point.create({x:100, y:100}),
+            endPoint2: Point.create({x:400, y:100}),
+            selector: "model.objects.0.line1"
+          }),
+          line2: Line.create({
+            endPoint1: Point.create({x:100, y:100}),
+            endPoint2: Point.create({x:400, y:100}),
+            selector: "model.objects.0.line2"
+          }),
+          name: "line 1",
+          selector: "model.objects.0"
+        }),
+        InterpolatedLine.create({
+          line1: Line.create({
+            endPoint1: Point.create({x:100, y:200}),
+            endPoint2: Point.create({x:400, y:200}),
+            selector: "model.objects.1.line1"
+          }),
+          line2: Line.create({
+            endPoint1: Point.create({x:100, y:200}),
+            endPoint2: Point.create({x:400, y:200}),
+            selector: "model.objects.1.line2"
+          }),
+          name: "line 2",
+          selector: "model.objects.1"
+        }),
         InterpolatedBezier.create({
           line1: BezierLine.create({
             endPoint1: Point.create({x:100, y:100}),
             endPoint2: Point.create({x:100, y:200}),
             controlPoint1: Point.create({x:160, y:150}),
-            selector: "model.objects.0.line1"
+            selector: "model.objects.2.line1"
           }),
           line2: BezierLine.create({
             endPoint1: Point.create({x:100, y:100}),
             endPoint2: Point.create({x:100, y:200}),
             controlPoint1: Point.create({x:100, y:150}),
-            selector: "model.objects.0.line2"
+            selector: "model.objects.2.line2"
           }),
           name: "bezier 1",
-          selector: "model.objects.0"
+          selector: "model.objects.2"
         }),
         InterpolatedBezier.create({
           line1: BezierLine.create({
             endPoint1: Point.create({x:400, y:100}),
             endPoint2: Point.create({x:400, y:200}),
             controlPoint1: Point.create({x:400, y:150}),
-            selector: "model.objects.1.line1"
+            selector: "model.objects.3.line1"
           }),
           line2: BezierLine.create({
             endPoint1: Point.create({x:400, y:100}),
             endPoint2: Point.create({x:400, y:200}),
             controlPoint1: Point.create({x:400, y:150}),
-            selector: "model.objects.1.line2"
+            selector: "model.objects.3.line2"
           }),
           name: "bezier 2",
-          selector: "model.objects.1"
+          selector: "model.objects.3"
         })
       ]
     });
