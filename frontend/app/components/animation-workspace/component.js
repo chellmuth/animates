@@ -51,9 +51,11 @@ export default Ember.Component.extend({
     main.selectAll("circle")
       .on("mouseover", function() {
         d3.select(this).attr("r", 6);
+        d3.event.stopPropagation();
       })
       .on("mouseout", function() {
         d3.select(this).attr("r", 4);
+        d3.event.stopPropagation();
       })
       .on("mousedown", function(d) {
         var selector = d.getWithDefault("selector", null);
