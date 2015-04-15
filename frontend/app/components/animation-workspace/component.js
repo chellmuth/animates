@@ -62,6 +62,14 @@ export default Ember.Component.extend({
         }
       });
 
+    main.selectAll("path")
+      .on("mouseover", function(d) {
+        d3.select(this).style("stroke-width", "4px");
+      })
+      .on("mouseout", function() {
+        d3.select(this).style("stroke-width", "2px");
+      });
+
     svg
       .on("mousemove", function() {
         var selector = that.get("selector");
