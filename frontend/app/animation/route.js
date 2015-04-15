@@ -188,7 +188,18 @@ var Container = Ember.Object.extend({
   draw: function(svg, t, style) {
     svg.selectAll("*").remove();
     this.get('objects').forEach(function(object) {
-      object.draw(svg.append("g"), t, style);
+      var g = svg.append("g");
+
+      object.draw(g, t, style);
+
+      if (style === "main") {
+        g.on("mouseover", function() {
+          d3.select(this).selectAll("path").style("stroke-width", "4px");
+        });
+        g.on("mouseout", function() {
+          d3.select(this).selectAll("path").style("stroke-width", "2px");
+        });
+      }
     });
   }
 });
